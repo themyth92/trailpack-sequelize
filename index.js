@@ -43,6 +43,17 @@ module.exports = class SequelizeTrailpack extends Trailpack {
       _.each(this.connections, (connection, name) => {
         if (model.connection == name) {
           this.app.orm[model.globalId] = connection.define(modelName, model.schema, model.config)
+          if (model.config.classMethods) {
+            _.each(model.config.classMethods, (methodFunc, methodName) => {
+              this.app.orm[model.globalId][methodName] = methodFunc
+            })
+          }
+
+          if (model.config.instanceMethods) {
+            _.each(model.config.instanceMethods, (methodFunc, methodName) => {
+              this.app.orm[model.globalId].prototype[methodName] = methodFunc
+            })
+          }
         }
       })
     })
